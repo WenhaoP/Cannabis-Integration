@@ -1,0 +1,1 @@
+from tag_products import get_all_tagged_products
