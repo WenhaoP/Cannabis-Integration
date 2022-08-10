@@ -1,15 +1,14 @@
 name: wa_pipeline_env
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - python=3.7.6
-  - pip==20.2.2
-  - pip:
-    - numpy==1.18.1
-    - pandas==1.0.1
-    - matplotlib==3.3.3
-    - seaborn==0.11.0
-    - fuzzywuzzy[speedup]
-    - xlrd
-    - geopy
-    - openpyxl
+  - numpy==1.18.1
+  - pandas==1.0.1
+  - matplotlib==3.3.3
+  - seaborn==0.11.0
+  - fuzzywuzzy[speedup]
+  - xlrd
+  - geopy
+  - openpyxl

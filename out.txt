@@ -1,0 +1,92 @@
+mkdir: created directory 'metrics/validation'
+mkdir: created directory 'metrics/validation/with_stop_words'
+mkdir: created directory 'metrics/validation/without_stop_words'
+mkdir: created directory 'metrics/test'
+mkdir: created directory 'metrics/test/with_stop_words'
+mkdir: created directory 'metrics/test/without_stop_words'
+Loaded the data
+Finished finding the best model hyperparameters
+Plotted the f1 scores of each label model
+Predicting Cannabinoid
+Predicting Intoxication
+Predicting Medical
+Predicting Wellness
+Predicting Commoditization
+Cannabinoid
+Intoxication
+Medical
+Wellness
+Commoditization
+Finished prediction
+================ Creating directories... ================
+mkdir -p Processed_Data/
+================ Finished creating directories ================
+
+================ Running python Cleaning_Pipeline.py ================
+Downloaded applicants_cleaned.csv, which include retailers, processors, and producers
+Total Number of Retailers in WA = 1036
+downloaded sales_with_no_applicant_info.csv
+Downloaded Proportion_Medical_Endorsements_Over_Time.png
+Downloaded Plots/Count_Without_Medical_Endorsements_Over_Time.png
+
+Checking Cancellations from the penalty data...
+All Cancelled Count = 71
+21 Retail Cancellations
+50 Non-Retail Cancellations
+
+Penalty features added to sales data
+downloaded washington_dataset
+================ Finished python Cleaning_Pipeline.py ================
+================ Running python fix_wa_sales_duplicates.py ================
+Computed Alternate Sales, 41 Duplicate sales removed from WA dataset
+Downloaded washington_dataset_no_duplicates.csv
+================ Finished python fix_wa_sales_duplicates.py ================
+================ Running python Area_Variables/area_variables.py ================
+Area variables created for 2014
+Area variables created for 2015
+Area variables created for 2016
+Area variables created for 2017
+Area variables created for 2018
+Area variables created for 2019
+Land Area variables merged
+Downloaded concatenated area_variables.csv as a reference
+Downloaded washington_dataset_with_area.csv
+================ Finished python Area_Variables/area_variables.py ================
+================ Running python linking_wmaps_pipeline.py ================
+
+Unique Weedmaps Addresses not in Applicants, and that do not match on MM/YYYY)
+5402 PACIFIC HWY
+DELIVERY ONLY
+30521 HANSVILLE
+213 SPRAGUE AVE
+15915B STATE HWY
+9926 34TH AVE
+
+Unique Weedmaps Addresses not in Washington, and that do not match on MM/YYYY)
+6906 MARTIN WAY
+5402 PACIFIC HWY
+DELIVERY ONLY
+30521 HANSVILLE
+207 9TH AVE
+614 116TH AVE
+213 SPRAGUE AVE
+15915B STATE HWY
+2256 HWY 153
+9926 34TH AVE
+
+Merge completed.
+Unique Coverage when merged with applicants: 0.9807692307692307
+Unique Coverage when merged with washngton_dataset: 0.967948717948718
+
+Coverage when merged with applicants: 0.9915014164305949
+Coverage when merged with washngton_dataset: 0.9830028328611898
+================ Finished python linking_wmaps_pipeline.py ================
+================ Running python Demographics/demographics.py ================
+merging demographic data...
+dispensaries with ownerships that don't sum to 100%: 1 / 485
+Licenses with conflicting owners: 0
+matched dispensaries: 25875 / 26393
+================ Finished python Demographics/demographics.py ================
+================ Running python Tag_Products/tag_products.py ================
+preprocessing tagged products reduced data from 459287 to 421813
+Failed. Make sure you import all the correct libraries
