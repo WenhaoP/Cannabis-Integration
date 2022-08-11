@@ -25,7 +25,7 @@ STOP_WORDS = True
 VALIDATION_SET_SIZE = 0.2
 
 # Class labels for model prediction
-# LABELS = ['Cannabinoid', 'Genetics', 'Intoxication', 'Look', 'Medical', 'Smell Flavor', 'Wellness', 'Commoditization']
+FULL_LABELS = ['Cannabinoid', 'Genetics', 'Intoxication', 'Look', 'Medical', 'Smell Flavor', 'Wellness', 'Commoditization']
 LABELS = ['Cannabinoid', 'Intoxication', 'Medical', 'Wellness', 'Commoditization']
 
 # Hyperparameter Grid

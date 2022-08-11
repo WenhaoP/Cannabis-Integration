@@ -60,6 +60,12 @@ def prediction(insample, full_dataset, best_val_models):
 
     for label in preds_dict:
         print(label)
-        full_dataset[label + 'labeled'] = preds_dict[label] 
+        full_dataset[f'{label}_labeled'] = preds_dict[label] 
+    
+    for unpredict_label in set(FULL_LABELS) - set(LABELS):
+        full_dataset[f"{unpredict_label}_labeled"] = np.zeros(full_dataset.shape[0]).astype(int)
+    
+    full_dataset = full_dataset.rename({"Medical_labeled":"Medical_undersampled_labeled"}, axis=1)
+    full_dataset["Medical_labeled"] = np.zeros(full_dataset.shape[0]).astype(int)
 
     return full_dataset 

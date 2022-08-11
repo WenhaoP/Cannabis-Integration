@@ -18,16 +18,19 @@ if __name__ == "__main__":
 
     ### Train, validate, and test models with hyperparameter tuning ###
     insample, outsample = load_data(STOP_WORDS)
-    print("Loaded the data")
+    print("=== Loaded the data ===")
     train(insample, outsample)
-    print("Finished finding the best model hyperparameters")
+    print("=== Finished searching the best model hyperparameters ===")
     
     best_val_models = find_best_model('validation', stop_words=STOP_WORDS)
     best_test_models = find_best_model('test', stop_words=STOP_WORDS)
 
+    best_val_models.to_csv(f'./metrics/best_val_models_{folder}.csv', index=False)
     best_val_models[['model_name' , 'num_filters', 'kernel_size', 
                      'dilation', 'vocab_size', 'embedding_dim', 
                      'maxlen', 'validation_set_size']].to_csv(f'./metrics/best_val_model_hyperparameters_{folder}.csv', index=False)
+    
+    best_test_models.to_csv(f'./metrics/best_test_models_{folder}.csv', index=False)
     best_test_models[['model_name' , 'num_filters', 'kernel_size', 
                      'dilation', 'vocab_size', 'embedding_dim', 
                      'maxlen', 'validation_set_size']].to_csv(f'./metrics/best_test_model_hyperparameters_{folder}.csv', index=False)
@@ -48,7 +51,7 @@ if __name__ == "__main__":
     )
     g.set(ylim=(0.7, 1))
     g.savefig('images/test_f1_scores.png')
-    print("Plotted the f1 scores of each label model")
+    print("=== Plotted the f1 scores of each label model ===")
 
     ### Prediction on the full dataset ###
     full_dataset = pd.read_csv("data/full_dataset.csv")
@@ -59,4 +62,4 @@ if __name__ == "__main__":
     
     full_dataset = prediction(insample, full_dataset, best_val_models)
     full_dataset.to_csv('data/full_dataset_with_labels.csv', index=False, line_terminator='\r\n')
-    print("Finished prediction")
+    print("=== Finished prediction ===")
