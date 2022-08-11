@@ -5,11 +5,11 @@ source $CONDA_BASE/etc/profile.d/conda.sh
 conda activate base
 
 printf "================ Started cleaning the integration repository ================\n\n"
-bash clean.sh
+bash clean_all.sh
 printf "================ Finished cleaning the integration repository ================\n\n"
 
 printf "================ Started setting up the integration repository ================\n\n"
-bash setup.sh
+bash setup_all.sh
 printf "================ Finished setting up the integration repository ================\n\n"
 
 conda deactivate
@@ -35,4 +35,9 @@ cd ..
 printf "================ Finished running the team2_f20_wa repository ================\n\n"
 
 printf "================ Extracting the final output ================\n\n"
-cp team2_f20_wa/Processed_Data/pipeline_final_output.csv .
+cp team2_f20_wa/Processed_Data/pipeline_final_output.csv output
+cp team1_f20_deep/data/full_dataset_with_labels.csv output
+cp team1_f20_deep/metrics/best_val_models_with_stop_words.csv output
+cp team1_f20_deep/metrics/best_test_models_with_stop_words.csv output
+cp team1_f20_deep/metrics/best_val_models_without_stop_words.csv output
+cp team1_f20_deep/metrics/best_test_models_with_stop_words.csv output

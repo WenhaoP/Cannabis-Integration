@@ -62,11 +62,11 @@ def load_data(stop_words=True):
 
     insample = pd.read_csv("data/in_sample.csv")
     clean_insample = clean_data(insample, stop_words=stop_words)
-    clean_insample.to_csv(f'data/clean_in_sample_{folder}', index=False)
+    clean_insample.to_csv(f'data/clean_in_sample_{folder}.csv', index=False)
 
     outsample = pd.read_csv("data/out_sample.csv")
     clean_outsample = clean_data(outsample, stop_words=stop_words)
-    clean_outsample.to_csv(f'data/clean_out_sample_{folder}', index=False)
+    clean_outsample.to_csv(f'data/clean_out_sample_{folder}.csv', index=False)
 
     return clean_insample, clean_outsample
 

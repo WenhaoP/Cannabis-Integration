@@ -2,8 +2,7 @@ from train import *
 
 def prediction(insample, full_dataset, best_val_models):
     """
-    Use the mod
-    
+    Use the best models on the validation set to predict
     """
     descriptions = insample['straindescription']
     descriptions_test = full_dataset['straindescription']
@@ -20,8 +19,25 @@ def prediction(insample, full_dataset, best_val_models):
         maxlen = int(row['maxlen'])
         vs = float(row['validation_set_size'])
 
-        print(f'Predicting {label}')    
-        Y = insample[label]
+        print(f'=== Predicting {label} ===')    
+        balanced_f = 'undersampled' in label
+        if balanced_f:
+            label = label.split('_')[0]
+            # Balancing the class distribution
+            insample_label = insample[['straindescription', label]]
+            class_0 = insample_label[insample_label[label] == 0]
+            class_1 = insample_label[insample_label[label] == 1]
+            if len(class_0) > len(class_1):
+                class_0 = class_0.sample(len(class_1))
+            else:
+                class_1 = class_1.sample(len(class_0))
+            insample_balanced = pd.concat([class_0, class_1], axis=0)
+            descriptions = insample_balanced['straindescription']
+            Y = insample_balanced[label]
+            label = label + '_undersampled'
+        else:
+            descriptions = insample['straindescription']
+            Y = insample[label]
 
         # Train-test split
         descriptions_train, descriptions_val, y_train, y_val = train_test_split(
@@ -62,10 +78,7 @@ def prediction(insample, full_dataset, best_val_models):
         print(label)
         full_dataset[f'{label}_labeled'] = preds_dict[label] 
     
-    for unpredict_label in set(FULL_LABELS) - set(LABELS):
+    for unpredict_label in (set(FULL_LABELS) - set(LABELS)):
         full_dataset[f"{unpredict_label}_labeled"] = np.zeros(full_dataset.shape[0]).astype(int)
-    
-    full_dataset = full_dataset.rename({"Medical_labeled":"Medical_undersampled_labeled"}, axis=1)
-    full_dataset["Medical_labeled"] = np.zeros(full_dataset.shape[0]).astype(int)
 
     return full_dataset 

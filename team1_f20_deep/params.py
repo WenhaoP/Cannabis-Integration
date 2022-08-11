@@ -27,11 +27,12 @@ VALIDATION_SET_SIZE = 0.2
 # Class labels for model prediction
 FULL_LABELS = ['Cannabinoid', 'Genetics', 'Intoxication', 'Look', 'Medical', 'Smell Flavor', 'Wellness', 'Commoditization']
 LABELS = ['Cannabinoid', 'Intoxication', 'Medical', 'Wellness', 'Commoditization']
+BALANCED_LABELS = ['Medical_undersampled']
 
 # Hyperparameter Grid
 HYPERPARAMETER_GRID = {
     "num_filters": [[16, 32, 64], [32, 64, 128], [64, 128, 256]],
-    "kernel_size": [2, 3, 4], 
+    "kernel_size": [3, 5, 7], 
     "dilation": [1, 2],
     "vocab_size": [5000], 
     "embedding_dim": [16, 32, 64],
@@ -42,7 +43,7 @@ ALL_COMBINATIONS = it.product(*(HYPERPARAMETER_GRID[key] for key in HYPERPARAMET
 ALL_COMBINATIONS = list(ALL_COMBINATIONS)
 
 # Define # of combinations of hyperparameters to consider
-NUM_COMBINATIONS = 5
+NUM_COMBINATIONS = 50
 assert(NUM_COMBINATIONS <= len(ALL_COMBINATIONS))
 
 random.seed(SEED)

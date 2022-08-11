@@ -109,7 +109,7 @@ def find_best_model(data, metric="f1", stop_words=True):
 
     # Rank results by output class and store in new dataframe
     results = []
-    for label in LABELS:
+    for label in LABELS + BALANCED_LABELS:
         results.append(df_data[df_data['model_name'] == label].sort_values(by=metric, ascending=False).iloc[:NUM_BEST_MODELS])
     best_models = pd.concat(results)
     best_models['rank'] = list(range(1, NUM_BEST_MODELS+1)) * (int(len(best_models) / NUM_BEST_MODELS))

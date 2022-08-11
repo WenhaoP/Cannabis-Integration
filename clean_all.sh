@@ -7,6 +7,8 @@ mamba env remove -n deep_wa
 mamba env remove -n wa_pipeline_env
 conda deactivate
 
+rm -rf output/*
+
 # clean the team1_f20_deep folder
 cd team1_f20_deep
 rm -rf metrics/* images/f1_scores.png data/clean_in_sample.csv data/clean_out_sample.csv

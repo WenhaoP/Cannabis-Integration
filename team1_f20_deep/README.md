@@ -73,6 +73,6 @@ We infer from the different models we have trained the best hyperparameters of t
 * smaller kernel size
 
 ### Results
-We achieve an f1 score of above 0.8 on the outsample model for all the `labels` except for `Look`. 
+F1-score of each model on the test set:
 
-![F1 Scores](images/f1_scores.png)
+![F1 Scores](images/test_f1_scores.png)

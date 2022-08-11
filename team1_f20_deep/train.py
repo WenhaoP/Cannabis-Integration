@@ -87,9 +87,30 @@ def train(insample, outsample, stop_words=True):
         maxlen = hyperparameter_combination[5]
         
         # Train for each unique label
-        for label in LABELS:
-            Y = insample[label]
-            y_test = outsample[label]
+        for label in LABELS + BALANCED_LABELS:
+            
+            balanced_f = 'undersampled' in label
+            if balanced_f:
+                label = label.split('_')[0]
+                # Balancing the class distribution
+                insample_label = insample[['straindescription', label]]
+                class_0 = insample_label[insample_label[label] == 0]
+                class_1 = insample_label[insample_label[label] == 1]
+                if len(class_0) > len(class_1):
+                    class_0 = class_0.sample(len(class_1))
+                else:
+                    class_1 = class_1.sample(len(class_0))
+                insample_balanced = pd.concat([class_0, class_1], axis=0)
+                descriptions = insample_balanced['straindescription']
+                descriptions_test = outsample['straindescription'] 
+                Y = insample_balanced[label]
+                y_test = outsample[label]
+                label = label + '_undersampled'
+            else:
+                descriptions = insample['straindescription']
+                descriptions_test = outsample['straindescription']
+                Y = insample[label]
+                y_test = outsample[label]
             
             # Train-test split
             descriptions_train, descriptions_val, y_train, y_val = train_test_split(
