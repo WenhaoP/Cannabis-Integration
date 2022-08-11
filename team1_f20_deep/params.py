@@ -43,7 +43,7 @@ ALL_COMBINATIONS = it.product(*(HYPERPARAMETER_GRID[key] for key in HYPERPARAMET
 ALL_COMBINATIONS = list(ALL_COMBINATIONS)
 
 # Define # of combinations of hyperparameters to consider
-NUM_COMBINATIONS = 50
+NUM_COMBINATIONS = 5
 assert(NUM_COMBINATIONS <= len(ALL_COMBINATIONS))
 
 random.seed(SEED)

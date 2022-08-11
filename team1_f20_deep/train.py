@@ -30,7 +30,7 @@ from utils import *
 from params import *
 from evaluate import *
 
-tf.compat.v1.random.set_random_seed(SEED)
+tf.random.set_seed(SEED)
 
 def create_model(num_filters, kernel_size, vocab_size, embedding_dim, maxlen, dilation_rate=1):
     """[summary]
@@ -88,33 +88,37 @@ def train(insample, outsample, stop_words=True):
         
         # Train for each unique label
         for label in LABELS + BALANCED_LABELS:
-            
             balanced_f = 'undersampled' in label
+
             if balanced_f:
                 label = label.split('_')[0]
-                # Balancing the class distribution
-                insample_label = insample[['straindescription', label]]
-                class_0 = insample_label[insample_label[label] == 0]
-                class_1 = insample_label[insample_label[label] == 1]
-                if len(class_0) > len(class_1):
-                    class_0 = class_0.sample(len(class_1))
-                else:
-                    class_1 = class_1.sample(len(class_0))
-                insample_balanced = pd.concat([class_0, class_1], axis=0)
-                descriptions = insample_balanced['straindescription']
-                descriptions_test = outsample['straindescription'] 
-                Y = insample_balanced[label]
-                y_test = outsample[label]
-                label = label + '_undersampled'
-            else:
-                descriptions = insample['straindescription']
-                descriptions_test = outsample['straindescription']
-                Y = insample[label]
-                y_test = outsample[label]
-            
+            Y = insample[label]
+
             # Train-test split
             descriptions_train, descriptions_val, y_train, y_val = train_test_split(
                 descriptions, Y, test_size = VALIDATION_SET_SIZE, random_state = SEED)
+            
+            if balanced_f:
+                # Balancing the class distribution
+                class_0_f = (y_train == 0)
+                class_0_n = class_0_f.sum()
+                class_0_descriptions = descriptions_train[class_0_f].reset_index(drop=True)
+
+                class_1_f = (y_train == 1)
+                class_1_n = class_1_f.sum()
+                class_1_descriptions = descriptions_train[class_1_f].reset_index(drop=True)
+
+                if class_0_n > class_1_n:
+                    class_0_descriptions = class_0_descriptions.sample(class_1_n)
+                else:
+                    class_1_descriptions = class_1_descriptions.sample(class_0_n)
+
+                descriptions_train = pd.concat([class_0_descriptions, class_1_descriptions], axis=0)
+                y_train = pd.Series(np.concatenate([np.zeros(len(class_0_descriptions), dtype=int), np.ones(len(class_1_descriptions), dtype=int)]))
+                y_test = outsample[label]
+                label = label + '_undersampled'
+            else:
+                y_test = outsample[label]
 
             # Tokenize words
             tokenizer = Tokenizer(num_words=5000)
