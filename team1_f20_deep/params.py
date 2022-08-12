@@ -9,7 +9,6 @@ Contains pipeline and modeling parameters that should be fixed at run time, but 
 to compare various results
 """
 
-from re import VERBOSE
 import sklearn
 from sklearn.model_selection import ParameterGrid
 import itertools as it
@@ -43,7 +42,7 @@ ALL_COMBINATIONS = it.product(*(HYPERPARAMETER_GRID[key] for key in HYPERPARAMET
 ALL_COMBINATIONS = list(ALL_COMBINATIONS)
 
 # Define # of combinations of hyperparameters to consider
-NUM_COMBINATIONS = 5
+NUM_COMBINATIONS = 100
 assert(NUM_COMBINATIONS <= len(ALL_COMBINATIONS))
 
 random.seed(SEED)
@@ -64,5 +63,5 @@ BATCH_SIZE = 256
 NUM_BEST_MODELS = 1
 
 # Print out training process
-VERBOSE = False
+VERBOSE = True
 

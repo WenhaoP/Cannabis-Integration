@@ -8,6 +8,8 @@ import seaborn as sns
 import argparse
 
 if __name__ == "__main__":
+    tf.random.set_seed(SEED)
+
     if 'team1_f20_deep' not in os.getcwd():
         os.chdir(os.getcwd() + '/team1_f20_deep')
 

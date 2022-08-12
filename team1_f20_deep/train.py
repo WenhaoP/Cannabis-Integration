@@ -30,8 +30,6 @@ from utils import *
 from params import *
 from evaluate import *
 
-tf.random.set_seed(SEED)
-
 def create_model(num_filters, kernel_size, vocab_size, embedding_dim, maxlen, dilation_rate=1):
     """[summary]
 
@@ -109,9 +107,9 @@ def train(insample, outsample, stop_words=True):
                 class_1_descriptions = descriptions_train[class_1_f].reset_index(drop=True)
 
                 if class_0_n > class_1_n:
-                    class_0_descriptions = class_0_descriptions.sample(class_1_n)
+                    class_0_descriptions = class_0_descriptions.sample(class_1_n, random_state=SEED)
                 else:
-                    class_1_descriptions = class_1_descriptions.sample(class_0_n)
+                    class_1_descriptions = class_1_descriptions.sample(class_0_n, random_state=SEED)
 
                 descriptions_train = pd.concat([class_0_descriptions, class_1_descriptions], axis=0)
                 y_train = pd.Series(np.concatenate([np.zeros(len(class_0_descriptions), dtype=int), np.ones(len(class_1_descriptions), dtype=int)]))

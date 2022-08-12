@@ -1,4 +1,21 @@
-from train import *
+import pandas as pd
+import numpy as np
+import sklearn
+import matplotlib.pyplot as plt
+import csv
+
+from params import *
+from train import create_model
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+from tensorflow.keras.layers import Dense, Activation
+from tensorflow.keras.preprocessing.text import Tokenizer, one_hot
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import layers
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import GridSearchCV
 
 def prediction(insample, full_dataset, best_val_models):
     """
@@ -10,6 +27,7 @@ def prediction(insample, full_dataset, best_val_models):
 
     for index, row in best_val_models.iterrows():
         label = row['model_name']
+        balanced_f = 'undersampled' in label
         num_filters = row['num_filters'].strip('][').split(', ')
         num_filters = [int(i) for i in num_filters]
         kernel_size = int(row['kernel_size'])
@@ -20,28 +38,33 @@ def prediction(insample, full_dataset, best_val_models):
         vs = float(row['validation_set_size'])
 
         print(f'=== Predicting {label} ===')    
-        balanced_f = 'undersampled' in label
+
         if balanced_f:
             label = label.split('_')[0]
-            # Balancing the class distribution
-            insample_label = insample[['straindescription', label]]
-            class_0 = insample_label[insample_label[label] == 0]
-            class_1 = insample_label[insample_label[label] == 1]
-            if len(class_0) > len(class_1):
-                class_0 = class_0.sample(len(class_1))
-            else:
-                class_1 = class_1.sample(len(class_0))
-            insample_balanced = pd.concat([class_0, class_1], axis=0)
-            descriptions = insample_balanced['straindescription']
-            Y = insample_balanced[label]
-            label = label + '_undersampled'
-        else:
-            descriptions = insample['straindescription']
-            Y = insample[label]
+        Y = insample[label]
 
         # Train-test split
         descriptions_train, descriptions_val, y_train, y_val = train_test_split(
             descriptions, Y, test_size=vs, random_state=1000)
+        
+        if balanced_f:
+            # Balancing the class distribution
+            class_0_f = (y_train == 0)
+            class_0_n = class_0_f.sum()
+            class_0_descriptions = descriptions_train[class_0_f].reset_index(drop=True)
+
+            class_1_f = (y_train == 1)
+            class_1_n = class_1_f.sum()
+            class_1_descriptions = descriptions_train[class_1_f].reset_index(drop=True)
+
+            if class_0_n > class_1_n:
+                class_0_descriptions = class_0_descriptions.sample(class_1_n, random_state=SEED)
+            else:
+                class_1_descriptions = class_1_descriptions.sample(class_0_n, random_state=SEED)
+
+            descriptions_train = pd.concat([class_0_descriptions, class_1_descriptions], axis=0)
+            y_train = pd.Series(np.concatenate([np.zeros(len(class_0_descriptions), dtype=int), np.ones(len(class_1_descriptions), dtype=int)]))
+            label = label + '_undersampled'
 
         # Tokenize words
         tokenizer = Tokenizer(num_words=5000)
@@ -63,7 +86,7 @@ def prediction(insample, full_dataset, best_val_models):
         es = EarlyStopping(monitor='val_accuracy', mode='max', min_delta=0.001, patience=2)
         model.fit(X_train, y_train,
                     epochs=20,
-                    verbose=False,
+                    verbose=VERBOSE,
                     batch_size=256,
                     validation_data=(X_val, y_val),
                     callbacks=[es])
