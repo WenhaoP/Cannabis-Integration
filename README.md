@@ -3,21 +3,23 @@ Integration of three cannabis project repositories
 
 # Reproduction setup
 
-Make sure you first install `mamba` in the base environment by running
+1. Make sure you first install `mamba` in the base environment by running
 ```{bash}
 conda install mamba -n base -c conda-forge
 ```
 
-For all the shell scripts that have the following lines at the beginning,
+2. For all the shell scripts that have the following lines at the beginning,
 ```{bash}
 CONDA_BASE='C:\Users\Wenhao\miniconda3'
 source $CONDA_BASE/etc/profile.d/conda.sh
 ```
 assign `CONDA_BASE` to the return of `conda info | grep -i 'base environment'`. Otherwise, you may see the error message like `conda command not found`. See more details in the discussion [here](https://github.com/conda/conda/issues/7980#issuecomment-441358406).
 
-Depending on your operation system, you might need to replace the command word `bash` with `.` in each shell script.
+3. Depending on your operation system, you might need to replace the command word `bash` with `.` in each shell script.
 
-If you do not have a GPU available on your laptop or PC, remove the installation of `cudatoolkit` and `cudnn` packages in `team1_f20_deep/environment.yml`.
+4. If you do not have a GPU available on your laptop or PC, remove the installation of `cudatoolkit` and `cudnn` packages in `team1_f20_deep/environment.yml`.
+
+5. Download `full_dataset.csv` from [here](https://drive.google.com/file/d/1lw2jXELtp0ADLUpBYDMkRlNflGn_stDr/view?usp=sharing) to `team1_f20_deep/data`.
 
 # Reproduction
 
