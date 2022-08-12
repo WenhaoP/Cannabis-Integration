@@ -73,9 +73,9 @@ def prediction(insample, full_dataset, best_val_models):
         predictions = predictions.round()
         
         preds_dict[label] = predictions
+        print(f'Positive rate: {np.mean(predictions)}')
 
     for label in preds_dict:
-        print(label)
         full_dataset[f'{label}_labeled'] = preds_dict[label] 
     
     for unpredict_label in (set(FULL_LABELS) - set(LABELS)):
