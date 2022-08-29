@@ -1,3 +1,13 @@
+####################################################
+## Author: Wenhao Pan
+## Institution: Berkeley Institute for Data Science
+## Spring 2022, Summer 2022
+####################################################
+
+"""
+Training, evaluation, and prediction of the textCNN text classification model
+"""
+
 from train import *
 from evaluate import *
 from predict import *
