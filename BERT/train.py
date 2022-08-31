@@ -1,3 +1,4 @@
+import shutil
 import pandas as pd
 import os
 import transformers
@@ -34,8 +35,13 @@ def train():
         model_dir = "bert_" + label
         best_model_dir = "best_" + model_dir
         best_model_dir_zip = "best_" + model_dir + ".zip"
-        os.system(f'rm -rf {model_dir} {best_model_dir} {best_model_dir_zip}') # remove possible cache
-
+        try:
+            shutil.rmtree(model_dir) # remove possible cache
+            shutil.rmtree(best_model_dir)
+            os.remove(best_model_dir_zip)
+        except:
+            None
+        
         # remove other labels and rename the target label
         other_labels = list(filter(lambda x: x != label, LABELS))
         tokenized_dataset_label = tokenized_dataset.remove_columns(other_labels)
@@ -92,7 +98,8 @@ def train():
         # save the best model
         model.save_pretrained(best_model_dir)
         os.system(f'zip -r {best_model_dir_zip} {best_model_dir}')
-        os.system(f'rm -rf {model_dir} {best_model_dir}')
+        shutil.rmtree(model_dir)
+        shutil.rmtree(best_model_dir)
 
     # save the evaluation result of each model
     val_eval_df = pd.DataFrame.from_dict(val_eval).transpose()
