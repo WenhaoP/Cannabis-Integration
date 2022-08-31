@@ -57,3 +57,6 @@ LR_SCHEDULER = "cosine" # type of learning rate scheduler
 STRATEGY = "steps" # strategy for logging, evaluation, and saving
 STEPS = 100 # number of steps for logging, evaluation, and saving
 EVAL_METRIC = "f1_score" # metric for selecting the best model
+
+### Prediction ###
+DOWN_SAMPLING = True # whether we downsample the data for prediction

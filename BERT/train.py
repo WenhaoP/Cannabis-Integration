@@ -92,6 +92,7 @@ def train():
         # save the best model
         model.save_pretrained(best_model_dir)
         os.system(f'zip -r {best_model_dir_zip} {best_model_dir}')
+        os.system(f'rm -rf {model_dir} {best_model_dir}')
 
     # save the evaluation result of each model
     val_eval_df = pd.DataFrame.from_dict(val_eval).transpose()
