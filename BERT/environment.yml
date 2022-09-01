@@ -1,18 +1,16 @@
 name: deep_wa_bert
 channels:
-  - huggingface
-  - pytorch
   - conda-forge
   - defaults
 dependencies:
-  - python
-  - ipykernel
-  - pytorch
-  - transformers
-  - datasets
-  - cudatoolkit
-  - pandas
-  - numpy
-  - matplotlib
-  - gensim
-  - scikit-learn 
+  - python==3.10.5
+  - ipykernel==6.15.1
+  - pytorch::pytorch==1.12.1
+  - huggingface::transformers==4.21.1
+  - huggingface::datasets==2.4.0
+  - cudatoolkit==11.6.0
+  - pandas==1.4.3
+  - numpy==1.23.2
+  - matplotlib==3.5.3
+  - gensim==4.2.0
+  - scikit-learn==1.1.2
