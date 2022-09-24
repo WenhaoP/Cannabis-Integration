@@ -42,6 +42,8 @@ TOKENIZER = AutoTokenizer.from_pretrained(
 )
 
 ### Training and Model Setup ###
+TRAIN = False # train new models if True
+
 # model hyperparameters
 CLASSIFIER_DROPOUT = 0.15 # dropout ratio for the classification head
 NUM_CLASSES = 2 # number of classes
