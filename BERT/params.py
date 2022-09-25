@@ -61,4 +61,4 @@ STEPS = 100 # number of steps for logging, evaluation, and saving
 EVAL_METRIC = "f1_score" # metric for selecting the best model
 
 ### Prediction ###
-DOWN_SAMPLING = True # whether we downsample the data for prediction
+DOWN_SAMPLING = False # whether we downsample the data for prediction

@@ -18,9 +18,12 @@ def prediction(down_sample=False):
     # preprocess the textual input 
     dataset = Dataset.from_pandas(clean_full)
     tokenized_dataset = dataset.map(preprocess_function, batched=True)
-    tokenized_dataset = tokenized_dataset.remove_columns(["straindescription", "__index_level_0__"])
+    # tokenized_dataset = tokenized_dataset.remove_columns(["straindescription", "__index_level_0__"])
+    tokenized_dataset = tokenized_dataset.remove_columns(["straindescription"])
 
     for label in LABELS:
+
+        print(f'Predicting {label}...')
 
         # set up directory paths
         best_model_dir = "best_bert_" + label
@@ -36,9 +39,11 @@ def prediction(down_sample=False):
         full_dataset[(label+"_labeled").lower()] = predict_labels
 
     # manipulate the dataframe so that it is acceptable to the washington pipeline code
-    full_dataset = full_dataset.rename({"Medical_labeled":"Medical_undersampled_labeled"}, axis=1)
+    full_dataset = full_dataset.rename({"Medical_labeled":"Medical_undersampled_labeled",
+     "medical_labeled":"medical_undersampled_labeled"}, axis=1)
 
     for unpredict_label in (set(FULL_LABELS) - set(LABELS)):
         full_dataset[f"{unpredict_label}_labeled"] = np.zeros(full_dataset.shape[0]).astype(int)
+    full_dataset["medical_labeled"] = np.zeros(full_dataset.shape[0]).astype(int)
 
     full_dataset.to_csv("data/full_dataset_with_labels.csv", index=False, line_terminator='\r\n')

@@ -55,18 +55,13 @@ def load_data(stop_words=True):
     assert os.path.exists("data/in_sample.csv"), "Need to download in_sample.csv first!"
     assert os.path.exists("data/out_sample.csv"), "Need to download out_sample.csv first!"
 
-    if stop_words:
-        folder = 'with_stop_words'
-    else:
-        folder = 'without_stop_words'
-
     insample = pd.read_csv("data/in_sample.csv")
     clean_insample = clean_data(insample, stop_words=stop_words)
-    clean_insample.to_csv(f'data/clean_in_sample_{folder}.csv', index=False)
+    clean_insample.to_csv(f'data/clean_in_sample.csv', index=False)
 
     outsample = pd.read_csv("data/out_sample.csv")
     clean_outsample = clean_data(outsample, stop_words=stop_words)
-    clean_outsample.to_csv(f'data/clean_out_sample_{folder}.csv', index=False)
+    clean_outsample.to_csv(f'data/clean_out_sample.csv', index=False)
 
     return clean_insample, clean_outsample
 

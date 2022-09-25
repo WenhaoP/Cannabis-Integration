@@ -29,13 +29,23 @@ To run the integration repository, run `run_all.sh` in the terminal.
 
 There are many shell scripts for different automation purposes.
 
-- `run_all.sh`: run all the repositories in order
-- `clean_all.sh`: clean up the intermediate and final outputs of each repository
-- `setup_all.sh`: set up the environment and folders of each repository
+- `run_bert_pipe.sh`: use the BERT to generate outputs for Washington data pipeline
+- `run_cnn_pipe.sh`: use the TextCNN to generate outputs for Washington data pipeline
+- `clean_bert_pipe.sh`: clean up `BERT` and `team2_f20_wa/` repositories
+- `clean_cnn_pipe.sh`: clean up `team1_f20_deep` and `team2_f20_wa/` repositories
+- `setup_bert_pipe.sh`: set up `BERT` and `team2_f20_wa/` repositories
+- `setup_cnn_pipe.sh`: set up `team1_f20_deep` and `team2_f20_wa/` repositories
+- `BERT/`:
+    - `clean_bert.sh`: clean up the intermediate and final outputs of the `BERT` repository
+    - `setup_bert.sh`: set up the environment and folders of the `BERT` repository 
 - `team1_f20_deep/`
-    - `clean_deep.sh`: clean up the intermediate and final outputs of the `team1_f20_deep` repository
-    - `setup_deep.sh`: set up the environment and folders of the `team1_f20_deep` repository
+    - `clean_cnn.sh`: clean up the intermediate and final outputs of the `team1_f20_deep` repository
+    - `setup_cnn.sh`: set up the environment and folders of the `team1_f20_deep` repository
 - `team2_f20_wa/`
     - `clean_wa.sh`： clean up the intermediate and final outputs of the `team2_f20_wa/` repository
     - `setup_wa.sh`: set up the environment and folders of the `team2_f20_wa/` repository
     - `run_wa.sh`: run the `team2_f20_wa/` repository
+
+# Note
+
+1. All the current shell scripts for automation purpose were designed for the current hyperparameter values. Changign the hyperparameter valus 

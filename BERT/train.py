@@ -103,6 +103,6 @@ def train():
 
     # save the evaluation result of each model
     val_eval_df = pd.DataFrame.from_dict(val_eval).transpose()
-    val_eval_df.to_csv("metrics/val_evaluation.csv")
+    val_eval_df.to_csv(f"metrics/val_evaluation.csv")
     test_eval_df = pd.DataFrame.from_dict(test_eval).transpose()
-    test_eval_df.to_csv("metrics/test_evaluation.csv")
+    test_eval_df.to_csv(f"metrics/test_evaluation.csv")

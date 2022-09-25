@@ -92,14 +92,9 @@ def find_best_model(data, metric="f1", stop_words=True):
             - Can tune how many models are returned with NUM_BEST_MODELS in params.py
     
     """
-    if stop_words:
-        folder = 'with_stop_words'
-    else:
-        folder = 'without_stop_words'
-
     # Load Validation results
     files = []
-    directory_path = "metrics/" + data + "/" + folder + "/"
+    directory_path = "metrics/" + data + "/"
     filenames = find_csv_filenames(directory_path)
     for name in filenames:
         filename = directory_path + name

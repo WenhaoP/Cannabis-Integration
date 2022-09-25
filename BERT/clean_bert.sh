@@ -1,3 +1,9 @@
 #!/bin/bash
+CONDA_BASE='C:\Users\Wenhao\miniconda3'
+source $CONDA_BASE/etc/profile.d/conda.sh
 
-rm -rf *.zip best_bert_* bert_*/*
+conda activate base
+mamba env remove -n deep_wa_bert
+conda deactivate
+
+rm data/full_dataset_with_labels.csv data/clean*.csv data/train.csv data/val.csv

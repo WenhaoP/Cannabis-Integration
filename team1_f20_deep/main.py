@@ -23,11 +23,6 @@ if __name__ == "__main__":
     if 'team1_f20_deep' not in os.getcwd():
         os.chdir(os.getcwd() + '/team1_f20_deep')
 
-    if STOP_WORDS:
-        folder = 'with_stop_words'
-    else:
-        folder = 'without_stop_words'
-
     ### Train, validate, and test models with hyperparameter tuning ###
     insample, outsample = load_data(STOP_WORDS)
     print("=== Loaded the data ===")
@@ -37,15 +32,15 @@ if __name__ == "__main__":
     best_val_models = find_best_model('validation', stop_words=STOP_WORDS)
     best_test_models = find_best_model('test', stop_words=STOP_WORDS)
 
-    best_val_models.to_csv(f'./metrics/best_val_models_{folder}.csv', index=False)
+    best_val_models.to_csv(f'./metrics/best_val_models.csv', index=False)
     best_val_models[['model_name' , 'num_filters', 'kernel_size', 
                      'dilation', 'vocab_size', 'embedding_dim', 
-                     'maxlen', 'validation_set_size']].to_csv(f'./metrics/best_val_model_hyperparameters_{folder}.csv', index=False)
+                     'maxlen', 'validation_set_size']].to_csv(f'./metrics/best_val_model_hyperparameters.csv', index=False)
     
-    best_test_models.to_csv(f'./metrics/best_test_models_{folder}.csv', index=False)
+    best_test_models.to_csv(f'./metrics/best_test_models.csv', index=False)
     best_test_models[['model_name' , 'num_filters', 'kernel_size', 
                      'dilation', 'vocab_size', 'embedding_dim', 
-                     'maxlen', 'validation_set_size']].to_csv(f'./metrics/best_test_model_hyperparameters_{folder}.csv', index=False)
+                     'maxlen', 'validation_set_size']].to_csv(f'./metrics/best_test_model_hyperparameters.csv', index=False)
     
     ### Plot the f1 scores of each label model ### 
     g = sns.catplot(

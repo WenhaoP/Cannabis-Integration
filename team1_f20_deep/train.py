@@ -64,11 +64,6 @@ def train(insample, outsample, stop_words=True):
     best_min_f1 = 0
     best_hyperparameters = []
 
-    if stop_words:
-        folder = 'with_stop_words'
-    else:
-        folder = 'without_stop_words'
-
     descriptions = insample['straindescription']
     descriptions_test = outsample['straindescription']
 
@@ -163,12 +158,12 @@ def train(insample, outsample, stop_words=True):
         
         output = pd.DataFrame(cols_val)
         output = output[COLUMN_NAMES]
-        output.to_csv('./metrics/validation/{}/metrics_traintestsplit({})_numfilters({})_kernelsize({})_dilation({})_vocab_size({})_embeddingdim({})_maxlen({}).csv'.format(
-            folder, traintestsplit, num_filters, kernel_size, dilation_rate, vocab_size, embedding_dim, maxlen), 
+        output.to_csv('./metrics/validation/metrics_traintestsplit({})_numfilters({})_kernelsize({})_dilation({})_vocab_size({})_embeddingdim({})_maxlen({}).csv'.format(
+            traintestsplit, num_filters, kernel_size, dilation_rate, vocab_size, embedding_dim, maxlen), 
             index=False, quoting=csv.QUOTE_NONNUMERIC)
         
         output = pd.DataFrame(cols_test)
         output = output[COLUMN_NAMES]
-        output.to_csv('./metrics/test/{}/metrics_traintestsplit({})_numfilters({})_kernelsize({})_dilation({})_vocab_size({})_embeddingdim({})_maxlen({}).csv'.format(
-            folder, traintestsplit, num_filters, kernel_size, dilation_rate, vocab_size, embedding_dim, maxlen), 
+        output.to_csv('./metrics/test/metrics_traintestsplit({})_numfilters({})_kernelsize({})_dilation({})_vocab_size({})_embeddingdim({})_maxlen({}).csv'.format(
+            traintestsplit, num_filters, kernel_size, dilation_rate, vocab_size, embedding_dim, maxlen), 
             index=False, quoting=csv.QUOTE_NONNUMERIC)
