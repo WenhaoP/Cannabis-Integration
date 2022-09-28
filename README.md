@@ -47,5 +47,3 @@ There are many shell scripts for different automation purposes.
     - `run_wa.sh`: run the `team2_f20_wa/` repository
 
 # Note
-
-1. All the current shell scripts for automation purpose were designed for the current hyperparameter values. Changign the hyperparameter valus 
