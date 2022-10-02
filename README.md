@@ -47,3 +47,5 @@ There are many shell scripts for different automation purposes.
     - `run_wa.sh`: run the `team2_f20_wa/` repository
 
 # Note
+
+1. In `variant_1`, we fit the TextCNN model with the best hyperparameters on the validation set on the training set, and use that to predict the full dataset 

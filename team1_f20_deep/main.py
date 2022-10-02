@@ -26,7 +26,8 @@ if __name__ == "__main__":
     ### Train, validate, and test models with hyperparameter tuning ###
     insample, outsample = load_data(STOP_WORDS)
     print("=== Loaded the data ===")
-    train(insample, outsample)
+    if TRAIN:
+        train(insample, outsample)
     print("=== Finished searching the best model hyperparameters ===")
     
     best_val_models = find_best_model('validation', stop_words=STOP_WORDS)

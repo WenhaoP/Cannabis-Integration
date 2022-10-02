@@ -92,7 +92,8 @@ def find_best_model(data, metric="f1", stop_words=True):
             - Can tune how many models are returned with NUM_BEST_MODELS in params.py
     
     """
-    # Load Validation results
+    # Load Validation/Test results
+    opposite = ('test' if data == 'validation' else 'validation')
     files = []
     directory_path = "metrics/" + data + "/"
     filenames = find_csv_filenames(directory_path)
@@ -109,6 +110,27 @@ def find_best_model(data, metric="f1", stop_words=True):
     best_models = pd.concat(results)
     best_models['rank'] = list(range(1, NUM_BEST_MODELS+1)) * (int(len(best_models) / NUM_BEST_MODELS))
     
+    # Find the corresponding test/validation results
+    new_results = []
+    for idx, r in best_models.iterrows():
+        validation_set_size = r['validation_set_size']
+        num_filters = r['num_filters']
+        kernel_size = r['kernel_size']
+        dilation_rate = r['dilation']
+        vocab_size = r['vocab_size']
+        vocab_size = 4970 # HARDCODE FIX LATER
+        embedding_dim = r['embedding_dim']
+        maxlen = r['maxlen']
+        filename = f'./metrics/{opposite}/metrics_traintestsplit({int((1-validation_set_size)*100)}.{int(validation_set_size*100)})_numfilters({num_filters})_kernelsize({kernel_size})_dilation({dilation_rate})_vocab_size({vocab_size})_embeddingdim({embedding_dim})_maxlen({maxlen}).csv'
+        df = pd.read_csv(filename)
+        result = df[df['model_name'] == r['model_name']]
+
+        new_result = r.copy()
+        for c in result:
+            new_result[f'{opposite}_{c}'] = result[c].values[0]
+
+        new_results.append(new_result)
+    best_models = pd.DataFrame(new_results)
     return best_models
 
 

@@ -57,6 +57,7 @@ COLUMN_NAMES = ['model_name', 'pred_true', 'pred_false', 'actual_true', 'actual_
 # Training Parameters
 NUM_EPOCHS = 20
 BATCH_SIZE = 256
+TRAIN = False # train new models if True
 
 
 # Validation Results: change to display more/less best models
