@@ -1,6 +1,7 @@
 import shutil
 import pandas as pd
 import os
+import numpy as np
 import transformers
 from transformers import  AutoModelForSequenceClassification, DataCollatorWithPadding
 from transformers import TrainingArguments, Trainer
@@ -32,15 +33,30 @@ def train():
         tokenized_dataset = tokenized_dataset.remove_columns("straindescription")
 
         # set up directory paths
-        model_dir = "bert_" + label
-        best_model_dir = "best_" + model_dir
-        best_model_dir_zip = "best_" + model_dir + ".zip"
+        model_dir = 'bert_' + label
+        best_model_dir = 'best_' + model_dir
+        best_model_dir_zip = 'best_' + model_dir + '.zip'
         try:
             shutil.rmtree(model_dir) # remove possible cache
             shutil.rmtree(best_model_dir)
             os.remove(best_model_dir_zip)
         except:
             None
+
+        # Combine Medical and Wellness columns
+        if (label == 'Medical_Wellness'):
+            dataset['train'] = dataset['train'].add_column(
+                'Medical_Wellness',
+                np.logical_or(dataset['train']['Medical'], dataset['train']['Wellness']).astype(int)
+            )
+            dataset['val'] = dataset['val'].add_column(
+                'Medical_Wellness',
+                np.logical_or(dataset['val']['Medical'], dataset['val']['Wellness']).astype(int)
+            )
+            dataset['test'] = dataset['test'].add_column(
+                'Medical_Wellness',
+                np.logical_or(dataset['test']['Medical'], dataset['test']['Wellness']).astype(int)
+            )
         
         # remove other labels and rename the target label
         other_labels = list(filter(lambda x: x != label, LABELS))

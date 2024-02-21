@@ -14,7 +14,7 @@ from transformers import AutoTokenizer
 MODEL_NAME = "bert-base-uncased" 
 
 FULL_LABELS = ['Cannabinoid', 'Genetics', 'Intoxication', 'Look', 'Medical', 'Smell Flavor', 'Wellness', 'Commoditization']
-LABELS = ["Cannabinoid", "Intoxication", "Medical", "Wellness", "Commoditization"]
+LABELS = ["Intoxication", "Medical_Wellness", "Commoditization"] # Medical_Wellness = 1 if (Medical == 1) OR (Wellness = 1)
 
 ### Preprocess Setup ###
 # text cleaning hyperparameters
