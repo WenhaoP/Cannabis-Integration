@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import numpy as np
 import transformers
-from transformers import  AutoModelForSequenceClassification, DataCollatorWithPadding
+from transformers import AutoModelForSequenceClassification, DataCollatorWithPadding
 from transformers import TrainingArguments, Trainer
 from datasets import load_dataset
 from sklearn.model_selection import train_test_split 
@@ -13,11 +13,34 @@ from utils import load_data, preprocess_function
 from evaluate import compute_metrics
 
 def train():
+
+    try:
+        os.remove("metrics/train_val_evaluation.csv")
+        os.remove("metrics/train_test_evaluation.csv")
+    except:
+        None
+
     val_eval = {}
     test_eval = {}
 
     # fine-tune a separate model for each label
     for label in LABELS:
+        print(f"=====Start running for the {label} label=====")
+
+        if os.path.exists("metrics/hp_tune_test_evaluation.csv"):
+            test_metric_table = pd.read_csv("metrics/hp_tune_test_evaluation.csv", index_col=0)
+            test_metric_table_label = test_metric_table.loc[test_metric_table.index == label,]
+            test_metric_table_label = test_metric_table_label.sort_values(['test_f1_score','learning_rate','weight_decay','batch_size'], ascending=[False, True, True, True])
+            
+            LR = test_metric_table_label.iloc[0]['learning_rate']
+            BATCH_SIZE = int(test_metric_table_label.iloc[0]['batch_size'])
+            GRAD_ACC_STEPS = (64 // BATCH_SIZE)
+            WEIGHT_DECAY = test_metric_table_label.iloc[0]['weight_decay']
+
+            print("=====Using the best hyperparameter combination from hyperparameter tuning=====")
+            print(f"=====The best hyperparameter combination is: learning rate = {LR}, batch size = {BATCH_SIZE}, weight decay = {WEIGHT_DECAY}=====")
+        else:
+            print("=====Using the default hyperparameter combination in params.py=====")
 
         # load the datasets
         raw_insample = pd.read_csv("data/in_sample.csv")
@@ -39,24 +62,10 @@ def train():
         try:
             shutil.rmtree(model_dir) # remove possible cache
             shutil.rmtree(best_model_dir)
+            print("remove")
             os.remove(best_model_dir_zip)
         except:
             None
-
-        # Combine Medical and Wellness columns
-        if (label == 'Medical_Wellness'):
-            dataset['train'] = dataset['train'].add_column(
-                'Medical_Wellness',
-                np.logical_or(dataset['train']['Medical'], dataset['train']['Wellness']).astype(int)
-            )
-            dataset['val'] = dataset['val'].add_column(
-                'Medical_Wellness',
-                np.logical_or(dataset['val']['Medical'], dataset['val']['Wellness']).astype(int)
-            )
-            dataset['test'] = dataset['test'].add_column(
-                'Medical_Wellness',
-                np.logical_or(dataset['test']['Medical'], dataset['test']['Wellness']).astype(int)
-            )
         
         # remove other labels and rename the target label
         other_labels = list(filter(lambda x: x != label, LABELS))
@@ -119,6 +128,6 @@ def train():
 
     # save the evaluation result of each model
     val_eval_df = pd.DataFrame.from_dict(val_eval).transpose()
-    val_eval_df.to_csv(f"metrics/val_evaluation.csv")
+    val_eval_df.to_csv(f"metrics/train_val_evaluation.csv")
     test_eval_df = pd.DataFrame.from_dict(test_eval).transpose()
-    test_eval_df.to_csv(f"metrics/test_evaluation.csv")
+    test_eval_df.to_csv(f"metrics/train_test_evaluation.csv")

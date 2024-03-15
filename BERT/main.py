@@ -12,7 +12,8 @@ import torch
 from transformers import AutoTokenizer
 
 from train import train
-from params import TRAIN, DOWN_SAMPLING
+from hp_tune import hyperparameter_tune
+from params import TRAIN, TUNE, PREDICT, DOWN_SAMPLING
 from predict import prediction
 
 if __name__ == "__main__":
@@ -27,5 +28,11 @@ if __name__ == "__main__":
     if TRAIN:
         print('Training models from scratch...')
         train()
-        
-    prediction(down_sample=DOWN_SAMPLING)
+
+    if TUNE:
+        print('Tuning the hyperparmeter...')
+        hyperparameter_tune()
+    
+    if PREDICT:
+        print('Making the predictions...')
+        prediction(down_sample=DOWN_SAMPLING)

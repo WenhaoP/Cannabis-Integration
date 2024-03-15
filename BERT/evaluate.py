@@ -22,8 +22,6 @@ def compute_metrics(eval_pred):
     logits, labels = eval_pred
     predictions = np.argmax(logits, axis=-1)
     prediction_scores = np.max(logits, axis=-1)
-    print(logits.shape, labels.shape)
-    print(predictions.shape, prediction_scores.shape)
 
     pred_true = np.count_nonzero(predictions)
     pred_false = predictions.shape[0] - pred_true
