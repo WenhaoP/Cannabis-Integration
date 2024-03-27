@@ -46,8 +46,8 @@ def prediction(down_sample=False):
         predictions = trainer.predict(tokenized_dataset)
         predict_labels = np.argmax(predictions.predictions, axis=-1)
         full_dataset[(label+"_labeled").lower()] = predict_labels
-        # full_dataset[(label+"_logit").lower()] = np.max(predictions.predictions, axis=-1)
-        # full_dataset[(label+"_prob").lower()] = F.softmax(from_numpy(predictions.predictions), dim=-1).numpy()[:,-1]
+        full_dataset[(label+"_logit").lower()] = np.max(predictions.predictions, axis=-1)
+        full_dataset[(label+"_prob").lower()] = F.softmax(from_numpy(predictions.predictions), dim=-1).numpy()[:,-1]
 
 
     # # manipulate the dataframe so that it is acceptable to the washington pipeline code
@@ -56,12 +56,12 @@ def prediction(down_sample=False):
 
     for unpredict_label in (set(FULL_LABELS) - set(LABELS)):
         full_dataset[f"{unpredict_label}_labeled"] = np.ones(full_dataset.shape[0]).astype(int) * -1
-        # full_dataset[f"{unpredict_label}_logit"] = np.ones(full_dataset.shape[0]).astype(int) * -1
-        # full_dataset[f"{unpredict_label}_prob"] = np.ones(full_dataset.shape[0]).astype(int) * -1
+        full_dataset[f"{unpredict_label}_logit"] = np.ones(full_dataset.shape[0]).astype(int) * -1
+        full_dataset[f"{unpredict_label}_prob"] = np.ones(full_dataset.shape[0]).astype(int) * -1
 
     full_dataset = full_dataset.rename({"Medical_labeled":"medical_labeled"}, axis=1)
     full_dataset["medical_undersampled_labeled"] = np.ones(full_dataset.shape[0]).astype(int) * -1
-    # full_dataset["medical_undersampled_logit"] = np.ones(full_dataset.shape[0]).astype(int) * -1
-    # full_dataset["medical_undersampled_prob"] = np.ones(full_dataset.shape[0]).astype(int) * -1
+    full_dataset["medical_undersampled_logit"] = np.ones(full_dataset.shape[0]).astype(int) * -1
+    full_dataset["medical_undersampled_prob"] = np.ones(full_dataset.shape[0]).astype(int) * -1
 
     full_dataset.to_csv("data/full_dataset_with_labels.csv", index=False, line_terminator='\r\n')

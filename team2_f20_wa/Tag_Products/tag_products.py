@@ -54,11 +54,19 @@ def preprocess(df):
 
     column_name_mapper = {
         'commoditization': 'commod',
+        'commoditization_logit': 'commod_logit',
+        'commoditization_prob': 'commod_prob',
         'intoxication': 'intox',
+        'intoxication_logit': 'intox_logit',
+        'intoxication_prob': 'intox_prob',
         'medical': 'med',
+        'medical_logit': 'med_logit',
+        'medical_prob': 'med_prob',
         'medical_undersampled': 'med_under',
         'medical_wellness': 'med_well_new',
-        'post_medical_wellness': 'post_med_well_new'
+        'medical_wellness_logit': 'med_well_new_logit',
+        'medical_wellness_prob': 'med_well_new_prob',
+        'post_medical_wellness': 'post_med_well_new',
     }
     df = df.rename(columns=column_name_mapper)
 
