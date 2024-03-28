@@ -1,6 +1,6 @@
 import numpy as np
 from datasets import load_metric
-from sklearn.metrics import matthews_corrcoef, cohen_kappa_score, confusion_matrix
+from sklearn.metrics import matthews_corrcoef, cohen_kappa_score, confusion_matrix, balanced_accuracy_score
 
 ### Evaluation Metrics ###
 metric_acc = load_metric("accuracy")
@@ -22,8 +22,6 @@ def compute_metrics(eval_pred):
     logits, labels = eval_pred
     predictions = np.argmax(logits, axis=-1)
     prediction_scores = np.max(logits, axis=-1)
-    print(logits.shape, labels.shape)
-    print(predictions.shape, prediction_scores.shape)
 
     pred_true = np.count_nonzero(predictions)
     pred_false = predictions.shape[0] - pred_true
@@ -37,6 +35,7 @@ def compute_metrics(eval_pred):
     roc_auc = metric_auc.compute(prediction_scores=predictions, references=labels)['roc_auc']
     matthews_correlation = matthews_corrcoef(y_true=labels, y_pred=predictions)
     cohen_kappa = cohen_kappa_score(y1=labels, y2=predictions)
+    balanced_accuracy = balanced_accuracy_score(y_true=labels, y_pred=predictions)
 
     tn, fp, fn, tp = confusion_matrix(y_true=labels, y_pred=predictions).ravel()
     specificity = tn / (tn + fp)
@@ -61,6 +60,7 @@ def compute_metrics(eval_pred):
         "true_positive": tp,
         "specificity": specificity,
         "sensitivity": sensitivity,
-        "informedness": informedness
+        "informedness": informedness,
+        "balanced_accuracy": balanced_accuracy
     }
     return metrics
