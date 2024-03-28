@@ -19,7 +19,7 @@ assign `CONDA_BASE` to the return of `conda info | grep -i 'base environment'`. 
 
 4. If you do not have a GPU available on your laptop or PC, remove the installation of `cudatoolkit` and `cudnn` packages in `team1_f20_deep/environment.yml`.
 
-5. Download `full_dataset.csv` from [here](https://drive.google.com/file/d/1lw2jXELtp0ADLUpBYDMkRlNflGn_stDr/view?usp=sharing) to `team1_f20_deep/data`.
+5. Download `full_dataset.csv` from [here](https://drive.google.com/file/d/1lw2jXELtp0ADLUpBYDMkRlNflGn_stDr/view?usp=sharing) to `team1_f20_deep/data` or `BERT/data`.
 
 # Reproduction
 
@@ -48,4 +48,18 @@ There are many shell scripts for different automation purposes.
 
 # Note
 
-1. In `variant_1`, we fit the TextCNN model with the best hyperparameters on the validation set on the training set, and use that to predict the full dataset 
+In Saturn Cloud, to use the conda environment in the terminal, please run
+
+```{bash}
+conda init bash
+bash
+conda activate saturn
+```
+
+See more details [here](https://saturncloud.io/docs/using-saturn-cloud/install-packages/).
+
+Then, to run the BERT model, execute
+```{bash}
+python main.py
+```
+in the terminal.
