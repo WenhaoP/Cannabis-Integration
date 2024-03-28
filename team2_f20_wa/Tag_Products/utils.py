@@ -24,6 +24,10 @@ column_names_quantitative = [
   'smellflavor',
   'med_under',
   'med_well',
+  'med_well_new',
+  'post_med_well_new',
+  'pre_hybrid',
+  'post_hybrid',
   'word_count',
   'is_dab',
 ]
