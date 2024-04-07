@@ -25,22 +25,60 @@ def hyperparameter_tune():
         print(f"=====Start tunning for the {label} label=====")
 
         # load the datasets
-        raw_insample = pd.read_csv("data/in_sample.csv")
-        raw_outsample = pd.read_csv("data/out_sample.csv")
-        clean_insample, clean_outsample = load_data("straindescription", LABELS, punctuations=PUNCTUATIONS, stop_words=STOP_WORDS, minimal=True)
-        train, val = train_test_split(clean_insample, test_size=VAL_SIZE, random_state=RANDOM_STATE)
-        train.to_csv('data/train.csv', index=False)
-        val.to_csv('data/val.csv', index=False)
+        # raw_insample = pd.read_csv("data/in_sample.csv")
+        # raw_outsample = pd.read_csv("data/out_sample.csv")
+        # clean_insample, clean_outsample = load_data("straindescription", LABELS, punctuations=PUNCTUATIONS, stop_words=STOP_WORDS, minimal=True)
+        # train, val = train_test_split(clean_insample, test_size=VAL_SIZE, random_state=RANDOM_STATE)
+        # train.to_csv('data/train.csv', index=False)
+        # val.to_csv('data/val.csv', index=False)
         dataset = load_dataset('csv', data_files={'train': ['data/train.csv'], 'val': ['data/val.csv'], 'test': ['data/clean_out_sample.csv']})
+        # if (label == 'Medical_Wellness'):
+        #     print('HERE!!!')
+        #     dataset['train'] = dataset['train'].add_column("Medical_Wellness", np.logical_or(dataset['train']['Medical'], dataset['train']['Wellness']).astype(int))
+        #     dataset['val'] = dataset['val'].add_column("Medical_Wellness", np.logical_or(dataset['val']['Medical'], dataset['val']['Wellness']).astype(int))
+        #     dataset['test'] = dataset['test'].add_column("Medical_Wellness", np.logical_or(dataset['test']['Medical'], dataset['test']['Wellness']).astype(int))
+        # if (label == 'Pre_Hybrid'):
+        #     dataset['train'] = dataset['train'].add_column("Pre_Hybrid", np.logical_and(
+        #         np.logical_or(dataset['train']['Medical'], dataset['train']['Wellness']).astype(int), 
+        #         dataset['train']['Intoxication']).astype(int))
+        #     dataset['val'] = dataset['val'].add_column("Pre_Hybrid", np.logical_and(
+        #         np.logical_or(dataset['val']['Medical'], dataset['val']['Wellness']).astype(int), 
+        #         dataset['val']['Intoxication']).astype(int))
+        #     dataset['test'] = dataset['test'].add_column("Pre_Hybrid", np.logical_and(
+        #         np.logical_or(dataset['test']['Medical'], dataset['test']['Wellness']).astype(int), 
+        #         dataset['test']['Intoxication']).astype(int))
 
+        # print(dataset)
         # preprocess the textual input 
         tokenized_dataset = dataset.map(preprocess_function, batched=True)
+        if (label == 'Medical_Wellness'):
+            # print('HERE!!!')
+            tokenized_dataset['train'] = tokenized_dataset['train'].add_column("Medical_Wellness", np.logical_or(tokenized_dataset['train']['Medical'], tokenized_dataset['train']['Wellness']).astype(int))
+            tokenized_dataset['val'] = tokenized_dataset['val'].add_column("Medical_Wellness", np.logical_or(tokenized_dataset['val']['Medical'], tokenized_dataset['val']['Wellness']).astype(int))
+            tokenized_dataset['test'] = tokenized_dataset['test'].add_column("Medical_Wellness", np.logical_or(tokenized_dataset['test']['Medical'], tokenized_dataset['test']['Wellness']).astype(int))
+        if (label == 'Pre_Hybrid'):
+            tokenized_dataset['train'] = tokenized_dataset['train'].add_column("Pre_Hybrid", np.logical_and(
+                np.logical_or(tokenized_dataset['train']['Medical'], tokenized_dataset['train']['Wellness']).astype(int), 
+                dataset['train']['Intoxication']).astype(int))
+            tokenized_dataset['val'] = tokenized_dataset['val'].add_column("Pre_Hybrid", np.logical_and(
+                np.logical_or(tokenized_dataset['val']['Medical'], tokenized_dataset['val']['Wellness']).astype(int), 
+                dataset['val']['Intoxication']).astype(int))
+            tokenized_dataset['test'] = tokenized_dataset['test'].add_column("Pre_Hybrid", np.logical_and(
+                np.logical_or(tokenized_dataset['test']['Medical'], tokenized_dataset['test']['Wellness']).astype(int), 
+                tokenized_dataset['test']['Intoxication']).astype(int))
+        # print(tokenized_dataset)
         tokenized_dataset = tokenized_dataset.remove_columns("straindescription")
         
         # remove other labels and rename the target label
-        other_labels = list(filter(lambda x: x != label, LABELS))
-        tokenized_dataset_label = tokenized_dataset.remove_columns(other_labels)
+        # other_labels = list(set(list(filter(lambda x: x != label, LABELS))) & set(tokenized_dataset['train'].column_names))
+        # print(other_labels)
+        # tokenized_dataset_label = tokenized_dataset.remove_columns(other_labels)
+        # print(tokenized_dataset['train'].column_names)
+        # print(set(tokenized_dataset['train'].column_names) - set([label] + ['input_ids', 'token_type_ids', 'attention_mask']))
+        tokenized_dataset_label = tokenized_dataset.remove_columns(set(tokenized_dataset['train'].column_names) - set([label] + ['input_ids', 'token_type_ids', 'attention_mask']))
+        # print(tokenized_dataset_label.column_names)
         tokenized_dataset_label = tokenized_dataset_label.rename_column(label, "label")
+        # print(tokenized_dataset_label.column_names)
 
         for hp_combination in SAMPLE_COMBINATIONS:
             val_eval = {}
