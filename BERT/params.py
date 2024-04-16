@@ -13,8 +13,10 @@ from transformers import AutoTokenizer
 # the name of the pre-trained model we want to use
 MODEL_NAME = "bert-base-uncased" 
 
-FULL_LABELS = ['Cannabinoid', 'Genetics', 'Intoxication', 'Look', 'Medical', 'Smell Flavor', 'Wellness', 'Commoditization']
-LABELS = ["Cannabinoid", "Intoxication", "Medical", "Wellness", "Commoditization"]
+FULL_LABELS = ['Cannabinoid', 'Genetics', 'Intoxication', 'Look', 'Medical', 'Smell Flavor', 'Wellness', 'Commoditization', 'Medical_Wellness', 'Pre_Hybrid']
+# LABELS = ["Cannabinoid", "Intoxication", "Medical", "Wellness", "Commoditization"]
+LABELS = ["Intoxication", 'Commoditization', 'Wellness', 'Medical', 'Medical_Wellness', 'Pre_Hybrid']
+# LABELS = ["Cannabinoid", "Intoxication"]
 
 ### Preprocess Setup ###
 # text cleaning hyperparameters
@@ -42,7 +44,7 @@ TOKENIZER = AutoTokenizer.from_pretrained(
 )
 
 ### Training and Model Setup ###
-TRAIN = False # train new models if True
+TRAIN = True # train new models if True
 
 # model hyperparameters
 CLASSIFIER_DROPOUT = 0.15 # dropout ratio for the classification head

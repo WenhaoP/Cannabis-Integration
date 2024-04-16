@@ -28,4 +28,4 @@ if __name__ == "__main__":
         print('Training models from scratch...')
         train()
         
-    prediction(down_sample=DOWN_SAMPLING)
+    # prediction(down_sample=DOWN_SAMPLING)

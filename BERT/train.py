@@ -1,5 +1,6 @@
 import shutil
 import pandas as pd
+import numpy as np
 import os
 import transformers
 from transformers import  AutoModelForSequenceClassification, DataCollatorWithPadding
@@ -19,16 +20,30 @@ def train():
     for label in LABELS:
 
         # load the datasets
-        raw_insample = pd.read_csv("data/in_sample.csv")
-        raw_outsample = pd.read_csv("data/out_sample.csv")
-        clean_insample, clean_outsample = load_data("straindescription", LABELS, punctuations=PUNCTUATIONS, stop_words=STOP_WORDS, minimal=True)
-        train, val = train_test_split(clean_insample, test_size=VAL_SIZE, random_state=RANDOM_STATE)
-        train.to_csv('data/train.csv', index=False)
-        val.to_csv('data/val.csv', index=False)
+        # raw_insample = pd.read_csv("data/in_sample.csv")
+        # raw_outsample = pd.read_csv("data/out_sample.csv")
+        # clean_insample, clean_outsample = load_data("straindescription", LABELS, punctuations=PUNCTUATIONS, stop_words=STOP_WORDS, minimal=True)
+        # train, val = train_test_split(clean_insample, test_size=VAL_SIZE, random_state=RANDOM_STATE)
+        # train.to_csv('data/train.csv', index=False)
+        # val.to_csv('data/val.csv', index=False)
         dataset = load_dataset('csv', data_files={'train': ['data/train.csv'], 'val': ['data/val.csv'], 'test': ['data/clean_out_sample.csv']})
 
         # preprocess the textual input 
         tokenized_dataset = dataset.map(preprocess_function, batched=True)
+        if (label == 'Medical_Wellness'):
+            tokenized_dataset['train'] = tokenized_dataset['train'].add_column("Medical_Wellness", np.logical_or(tokenized_dataset['train']['Medical'], tokenized_dataset['train']['Wellness']).astype(int))
+            tokenized_dataset['val'] = tokenized_dataset['val'].add_column("Medical_Wellness", np.logical_or(tokenized_dataset['val']['Medical'], tokenized_dataset['val']['Wellness']).astype(int))
+            tokenized_dataset['test'] = tokenized_dataset['test'].add_column("Medical_Wellness", np.logical_or(tokenized_dataset['test']['Medical'], tokenized_dataset['test']['Wellness']).astype(int))
+        if (label == 'Pre_Hybrid'):
+            tokenized_dataset['train'] = tokenized_dataset['train'].add_column("Pre_Hybrid", np.logical_and(
+                np.logical_or(tokenized_dataset['train']['Medical'], tokenized_dataset['train']['Wellness']).astype(int), 
+                dataset['train']['Intoxication']).astype(int))
+            tokenized_dataset['val'] = tokenized_dataset['val'].add_column("Pre_Hybrid", np.logical_and(
+                np.logical_or(tokenized_dataset['val']['Medical'], tokenized_dataset['val']['Wellness']).astype(int), 
+                dataset['val']['Intoxication']).astype(int))
+            tokenized_dataset['test'] = tokenized_dataset['test'].add_column("Pre_Hybrid", np.logical_and(
+                np.logical_or(tokenized_dataset['test']['Medical'], tokenized_dataset['test']['Wellness']).astype(int), 
+                tokenized_dataset['test']['Intoxication']).astype(int))
         tokenized_dataset = tokenized_dataset.remove_columns("straindescription")
 
         # set up directory paths
@@ -43,8 +58,8 @@ def train():
             None
         
         # remove other labels and rename the target label
-        other_labels = list(filter(lambda x: x != label, LABELS))
-        tokenized_dataset_label = tokenized_dataset.remove_columns(other_labels)
+        # other_labels = list(filter(lambda x: x != label, LABELS))
+        tokenized_dataset_label = tokenized_dataset.remove_columns(set(tokenized_dataset['train'].column_names) - set([label] + ['input_ids', 'token_type_ids', 'attention_mask']))
         tokenized_dataset_label = tokenized_dataset_label.rename_column(label, "label")
 
         # load the pre-trained model
@@ -54,14 +69,50 @@ def train():
             num_labels=NUM_CLASSES,
         )
 
+        if (label == "Commoditization"):
+            lr = 3e-5
+            bs = 64
+            grad_steps = (64 // bs)
+            wd = 1/8 * 1e-3
+        elif (label == "Intoxication"):
+            lr = 5e-5
+            bs = 16
+            grad_steps = (64 // bs)
+            wd = 1/8 * 1e-3
+        elif (label == "Medical"):
+            lr = 2e-5
+            bs = 16
+            grad_steps = (64 // bs)
+            wd = 1/8 * 1e-3
+        elif (label == "Medical_Wellness"):
+            lr = 2e-5
+            bs = 16
+            grad_steps = (64 // bs)
+            wd = 1/8 * 1e-3
+        elif (label == "Pre_Hybrid"):
+            lr = 5e-5
+            bs = 16
+            grad_steps = (64 // bs)
+            wd = 1/8 * 1e-3
+        elif (label == "Wellness"):
+            lr = 2e-5
+            bs = 64
+            grad_steps = (64 // bs)
+            wd = 1/8 * 1e-3
+        elif (label == "Cannabinoid"):
+            lr = 5e-5
+            bs = 16
+            grad_steps = (64 // bs)
+            wd = 2e-3
+
         # set up the training arguments
         training_args = TrainingArguments(
             output_dir=model_dir,
-            per_device_train_batch_size=BATCH_SIZE,
-            per_device_eval_batch_size=BATCH_SIZE,
-            gradient_accumulation_steps=GRAD_ACC_STEPS,
-            learning_rate=LR,
-            weight_decay=WEIGHT_DECAY, 
+            per_device_train_batch_size=bs,
+            per_device_eval_batch_size=bs,
+            gradient_accumulation_steps=grad_steps,
+            learning_rate=lr,
+            weight_decay=wd, 
             num_train_epochs=EPOCHS,
             lr_scheduler_type=LR_SCHEDULER,
             evaluation_strategy=STRATEGY,
