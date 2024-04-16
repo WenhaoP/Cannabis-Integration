@@ -174,10 +174,14 @@ def main():
 
   # LD: WA state data to WA state data
   LD_state_to_state = cmu.get_LD(racial_wa_join, racial_wa_join, "business tag", time_period_col="Year Month", max_dist=WA_DIAMETER, print_percents=10e-2)
-  racial_wa_join["LD_state_to_state"], racial_wa_join["LD_state_to_state_count"] = LD_state_to_state[0], LD_state_to_state[1]
+  racial_wa_join["LD_state_to_state"], racial_wa_join["new_LD_state_to_state"], racial_wa_join["LD_state_to_state_count"] = LD_state_to_state[0], LD_state_to_state[1], LD_state_to_state[2]
+  # new_LD_state_to_state = cmu.get_new_LD(racial_wa_join, racial_wa_join, "business tag", time_period_col="Year Month", max_dist=WA_DIAMETER, print_percents=10e-2)
+  # racial_wa_join["new_LD_state_to_state"], racial_wa_join["new_LD_state_to_state_count"] = new_LD_state_to_state[0], new_LD_state_to_state[1]
   # LD: WA state data to weedmaps illegal
   LD_state_to_illegal = cmu.get_LD(racial_wa_join, wa_illegal, "business tag", time_period_col="Year Month", max_dist=WA_DIAMETER, print_percents=10e-2)
-  racial_wa_join["LD_state_to_illegal"], racial_wa_join["LD_state_to_illegal_count"] = LD_state_to_illegal[0], LD_state_to_illegal[1]
+  racial_wa_join["LD_state_to_illegal"], racial_wa_join["new_LD_state_to_illegal"], racial_wa_join["LD_state_to_illegal_count"] = LD_state_to_illegal[0], LD_state_to_illegal[1], LD_state_to_illegal[2]
+  # new_LD_state_to_illegal = cmu.get_new_LD(racial_wa_join, wa_illegal, "business tag", time_period_col="Year Month", max_dist=WA_DIAMETER, print_percents=10e-2)
+  # racial_wa_join["new_LD_state_to_illegal"], racial_wa_join["new_LD_state_to_illegal_count"] = new_LD_state_to_illegal[0], new_LD_state_to_illegal[1]
   racial_wa_join.to_csv('Processed_Data/pipeline_final_output.csv', index=False)
 
 if __name__ == "__main__":

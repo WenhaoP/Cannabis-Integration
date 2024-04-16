@@ -169,9 +169,58 @@ def get_LD(df_focus_group, df_competitors, id_col, time_period_col=False, max_di
         dist_to_curr = lambda coord: geodesic(eval(row["coord"]), eval(coord)).miles
         distances = tperiod_group["coord"].apply(dist_to_curr)
         distances = np.minimum(distances, max_dist) # Upperbound how large a distances
-        return [np.sum(1 / (1 + distances)), distances.shape[0]]
+        return [np.sum(1 / (1 + distances)), 1 / (1 + distances).min(), distances.shape[0]]
 
     start_time = time.time()
     out = df_focus_group.apply(get_LD_func, axis=1, result_type='expand')
     print("\nExecuted in", (time.time() - start_time)//60, "minutes")
     return out.iloc[:, 0], out.iloc[:, 1]
+
+# def get_new_LD(df_focus_group, df_competitors, id_col, time_period_col=False, max_dist=np.inf, print_percents=0.1, verbose=True):
+#     """
+#     Identical to get_LD besides the LD is the inverse of its distance to the closest competitors group.
+#     """
+#     assert 'coord' in df_focus_group.columns and 'coord' in df_competitors.columns, \
+#         "column 'coord' with coordinates must be present in both DataFrames"
+
+#     # if no specified time_period_col, set all rows to share common time period
+#     if not time_period_col:
+#         time_period_col = 'TIME_PERIOD'
+#         df_focus_group[time_period_col], df_competitors[time_period_col] = 1, 1
+
+#     df_competitors = df_competitors.set_index([id_col, time_period_col])
+#     print_prog = make_progress_counter(df_focus_group.shape[0], print_percents)
+
+#     # remove nulls
+#     df_competitors_clean = df_competitors[~pd.isnull(df_competitors["coord"])]
+#     period_groups_competition = df_competitors_clean.groupby(time_period_col)
+#     avalible_periods = period_groups_competition.groups.keys()
+
+
+#     def get_LD_func(row):
+#         if verbose:
+#           print_prog()
+
+#         if pd.isnull(row["coord"]):
+#           return np.nan
+
+#         # calculate distances for a dispensery time_period_col's competition
+#         tperiod = row[time_period_col]
+#         if tperiod not in avalible_periods:
+#             return [pd.NA, 0] # no competition avalible
+#         tperiod_group = period_groups_competition.get_group(tperiod)
+
+#         # ignore self, if revalant
+#         row_id = row[id_col], row[time_period_col]
+#         if row_id in tperiod_group:
+#             tperiod_group.drop(row_id, inplace=True)
+
+#         dist_to_curr = lambda coord: geodesic(eval(row["coord"]), eval(coord)).miles
+#         distances = tperiod_group["coord"].apply(dist_to_curr)
+#         distances = np.minimum(distances, max_dist) # Upperbound how large a distances
+#         return [1 / (1 + distances.min()), distances.shape[0]]
+
+#     start_time = time.time()
+#     out = df_focus_group.apply(get_LD_func, axis=1, result_type='expand')
+#     print("\nExecuted in", (time.time() - start_time)//60, "minutes")
+#     return out.iloc[:, 0], out.iloc[:, 1]
