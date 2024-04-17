@@ -158,23 +158,23 @@ def get_LD(df_focus_group, df_competitors, id_col, time_period_col=False, max_di
         # calculate distances for a dispensery time_period_col's competition
         tperiod = row[time_period_col]
         if tperiod not in avalible_periods:
-            return [pd.NA, 0] # no competition avalible
+            return [pd.NA, pd.NA, pd.NA, 0] # no competition avalible
         tperiod_group = period_groups_competition.get_group(tperiod)
 
         # ignore self, if revalant
         row_id = row[id_col], row[time_period_col]
-        if row_id in tperiod_group:
+        if row_id in tperiod_group.index:
             tperiod_group.drop(row_id, inplace=True)
 
         dist_to_curr = lambda coord: geodesic(eval(row["coord"]), eval(coord)).miles
         distances = tperiod_group["coord"].apply(dist_to_curr)
         distances = np.minimum(distances, max_dist) # Upperbound how large a distances
-        return [np.sum(1 / (1 + distances)), 1 / (1 + distances).min(), distances.shape[0]]
+        return [np.sum(1 / (distances + 1)), 1 / np.min(distances + 1), np.sum(1 / np.sort(distances + 1)[:3]), distances.shape[0]]
 
     start_time = time.time()
     out = df_focus_group.apply(get_LD_func, axis=1, result_type='expand')
     print("\nExecuted in", (time.time() - start_time)//60, "minutes")
-    return out.iloc[:, 0], out.iloc[:, 1]
+    return out.iloc[:, 0], out.iloc[:, 1], out.iloc[:, 2], out.iloc[:, 3]
 
 # def get_new_LD(df_focus_group, df_competitors, id_col, time_period_col=False, max_dist=np.inf, print_percents=0.1, verbose=True):
 #     """
