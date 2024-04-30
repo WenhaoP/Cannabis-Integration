@@ -26,7 +26,7 @@ def train():
         # train, val = train_test_split(clean_insample, test_size=VAL_SIZE, random_state=RANDOM_STATE)
         # train.to_csv('data/train.csv', index=False)
         # val.to_csv('data/val.csv', index=False)
-        dataset = load_dataset('csv', data_files={'train': ['data/train.csv'], 'val': ['data/val.csv'], 'test': ['data/clean_out_sample.csv']})
+        dataset = load_dataset('csv', data_files={'train': ['data/full_train.csv'], 'val': ['data/full_val.csv'], 'test': ['data/clean_out_sample.csv']})
 
         # preprocess the textual input 
         tokenized_dataset = dataset.map(preprocess_function, batched=True)
@@ -100,6 +100,11 @@ def train():
             grad_steps = (64 // bs)
             wd = 1/8 * 1e-3
         elif (label == "Cannabinoid"):
+            lr = 5e-5
+            bs = 16
+            grad_steps = (64 // bs)
+            wd = 2e-3
+        else:
             lr = 5e-5
             bs = 16
             grad_steps = (64 // bs)
