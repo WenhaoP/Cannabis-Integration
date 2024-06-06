@@ -104,8 +104,15 @@ def get_tagged_products(df, format_column_s="{}", add_temporal=False):
     df_quantitative = df[column_names_quantitative].groupby(['slug', 'monthly date']).mean()
     df_counts = df[column_names_quantitative[0]].groupby(['slug', 'monthly date']).agg(["size"]).rename(
       columns=lambda _: "productCNT")
+    
+    # repeat the aggregation but ignore the observations with empty being true
+    df_quantitative_no_empty = df.copy()
+    for col_name in column_names_quantitative:
+        df_quantitative_no_empty[col_name] = df_quantitative_no_empty[col_name] * (df_quantitative_no_empty["is_empty"] == 0)
+    df_quantitative_no_empty = df_quantitative_no_empty[column_names_quantitative].groupby(['slug', 'monthly date']).mean()
+    df_quantitative_no_empty.columns = list(map(lambda x: x + "_no_empty", df_quantitative_no_empty.columns))
 
-    tagged = pd.concat([df_qualitative, df_quantitative, df_counts], axis=1)
+    tagged = pd.concat([df_qualitative, df_quantitative, df_quantitative_no_empty, df_counts], axis=1)
     tagged = tagged.rename(columns=format_column_s.format)
 
     if add_temporal:
