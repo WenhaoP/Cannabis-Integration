@@ -5,7 +5,7 @@ import os
 import transformers
 from transformers import  AutoModelForSequenceClassification, DataCollatorWithPadding
 from transformers import TrainingArguments, Trainer
-from datasets import load_dataset
+from datasets import load_dataset, Dataset, DatasetDict
 from sklearn.model_selection import train_test_split 
 
 from params import *
@@ -26,7 +26,35 @@ def train():
         # train, val = train_test_split(clean_insample, test_size=VAL_SIZE, random_state=RANDOM_STATE)
         # train.to_csv('data/train.csv', index=False)
         # val.to_csv('data/val.csv', index=False)
-        dataset = load_dataset('csv', data_files={'train': ['data/full_train.csv'], 'val': ['data/full_val.csv'], 'test': ['data/clean_out_sample.csv']})
+        if (label in ["Intoxication", "Medical", "Wellness"]):
+            train = pd.read_csv("data/full_train.csv")
+            val = pd.read_csv("data/full_val.csv")
+            comb = pd.concat([train, val])
+
+            pos_obs = comb[comb[label] == 1]
+            neg_obs = comb[comb[label] == 0]
+
+            if (len(pos_obs) >= len(neg_obs)):
+                pos_obs = pos_obs.sample(n=len(neg_obs), replace=False, random_state=SEED)
+            else:
+                neg_obs = neg_obs.sample(n=len(pos_obs), replace=False, random_state=SEED)
+            
+            comb = pd.concat([pos_obs, neg_obs]).sample(frac=1, random_state=SEED)
+            balanced_train, balanced_val = train_test_split(comb, test_size=VAL_SIZE, random_state=RANDOM_STATE)
+            balanced_train = Dataset.from_pandas(balanced_train, preserve_index=False)
+            balanced_val = Dataset.from_pandas(balanced_val, preserve_index=False)
+            out_sample = Dataset.from_pandas(pd.read_csv("data/clean_out_sample.csv"), preserve_index=False)
+            dataset = DatasetDict({"train": balanced_train, "val": balanced_val, "test": out_sample})
+        else:
+            train = Dataset.from_pandas(pd.read_csv("data/full_train.csv"))
+            val = Dataset.from_pandas(pd.read_csv("data/full_val.csv"))
+            out_sample = Dataset.from_pandas(pd.read_csv("data/clean_out_sample.csv"))
+            dataset = DatasetDict({"train": train, "val": val, "test": out_sample})
+            # dataset = load_dataset(
+            #     'csv', 
+            #     data_files={'train': ['data/full_train.csv'], 'val': ['data/full_val.csv'], 'test': ['data/clean_out_sample.csv']}, 
+            #     # column_names=["straindescription","Cannabinoid","Genetics","Intoxication","Look","Medical","Smell Flavor","Wellness","Commoditization"]
+            # )
 
         # preprocess the textual input 
         tokenized_dataset = dataset.map(preprocess_function, batched=True)

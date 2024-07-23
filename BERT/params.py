@@ -14,10 +14,10 @@ from transformers import AutoTokenizer
 MODEL_NAME = "bert-base-uncased" 
 
 FULL_LABELS = ['Cannabinoid', 'Genetics', 'Intoxication', 'Look', 'Medical', 'Smell Flavor', 'Wellness', 'Commoditization', 'Medical_Wellness', 'Pre_Hybrid']
-# LABELS = ["Cannabinoid", "Intoxication", "Medical", "Wellness", "Commoditization"]
+# LABELS = ["Intoxication", "Medical", "Wellness"]
 # LABELS = ["Intoxication", 'Commoditization', 'Wellness', 'Medical', 'Medical_Wellness', 'Pre_Hybrid']
 LABELS = FULL_LABELS
-# LABELS = ["Cannabinoid", "Intoxication"]
+
 
 ### Preprocess Setup ###
 # text cleaning hyperparameters
