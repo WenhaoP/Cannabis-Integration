@@ -13,7 +13,7 @@ conda install mamba -n base -c conda-forge
 CONDA_BASE='C:\Users\Wenhao\miniconda3'
 source $CONDA_BASE/etc/profile.d/conda.sh
 ```
-assign `CONDA_BASE` to the return of `conda info | grep -i 'base environment'`. Otherwise, you may see the error message like `conda command not found`. See more details in the discussion [here](https://github.com/conda/conda/issues/7980#issuecomment-441358406).
+you need to change assignment of `CONDA_BASE` according to your local setup. Otherwise, you may see an error message like `conda command not found`. See more details in the discussion [here](https://github.com/conda/conda/issues/7980#issuecomment-441358406).
 
 3. Depending on your operation system, you might need to replace the command word `bash` with `.` in each shell script.
 
@@ -23,7 +23,7 @@ assign `CONDA_BASE` to the return of `conda info | grep -i 'base environment'`. 
 
 # Reproduction
 
-To run the integration repository, run `run_all.sh` in the terminal.
+To run the integration repository, run the automation shell scripts listed below.
 
 # Shell scripts
 
